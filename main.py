@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from PySide6 import QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 
 class TextEditor(QtWidgets.QMainWindow):
@@ -21,6 +21,15 @@ class TextEditor(QtWidgets.QMainWindow):
         self.setCentralWidget(self._editor)
 
         self._status = self.statusBar()
+        self._path_label = QtWidgets.QLabel()
+        self._path_label.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
+        self._path_label.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+        )
+        self._status.addWidget(self._path_label, 1)
         self._cursor_label = QtWidgets.QLabel()
         self._status.addPermanentWidget(self._cursor_label)
 
@@ -29,8 +38,8 @@ class TextEditor(QtWidgets.QMainWindow):
         # self._build_toolbar()
         self._connect_signals()
 
-        self.setWindowTitle("Untitled — Waynotes")
         self.resize(900, 650)
+        self._update_title()
 
         if initial_path is not None:
             self.open_path(initial_path)
@@ -147,6 +156,10 @@ class TextEditor(QtWidgets.QMainWindow):
         name = self._path.name if self._path else "Untitled"
         modified = " •" if self._editor.document().isModified() else ""
         self.setWindowTitle(f"{name}{modified} — Waynotes")
+        if self._path is not None:
+            self._path_label.setText(str(self._path.resolve()))
+        else:
+            self._path_label.setText("scratch file")
 
     def _update_cursor_status(self) -> None:
         cursor = self._editor.textCursor()
