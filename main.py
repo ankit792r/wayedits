@@ -13,11 +13,12 @@ class TextEditor(QtWidgets.QMainWindow):
         self._encoding = "utf-8"
 
         self._editor = QtWidgets.QPlainTextEdit()
-        font = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont)
-        self._editor.setFont(font)
-        self._editor.setTabStopDistance(
-            QtGui.QFontMetrics(font).horizontalAdvance(" ") * 4
+        self._editor_font = QtGui.QFontDatabase.systemFont(
+            QtGui.QFontDatabase.FixedFont
         )
+        self._font_size_min = 12
+        self._font_size_max = 120
+        self._apply_editor_font()
         self.setCentralWidget(self._editor)
 
         self._status = self.statusBar()
@@ -89,6 +90,15 @@ class TextEditor(QtWidgets.QMainWindow):
         self._word_wrap_action.setCheckable(True)
         self._word_wrap_action.setChecked(True)
 
+        self._zoom_in_action = QtGui.QAction("Zoom &In", self)
+        self._zoom_in_action.setShortcut(QtGui.QKeySequence.StandardKey.ZoomIn)
+
+        self._zoom_out_action = QtGui.QAction("Zoom &Out", self)
+        self._zoom_out_action.setShortcut(QtGui.QKeySequence.StandardKey.ZoomOut)
+
+        self._reset_font_action = QtGui.QAction("&Reset Font Size", self)
+        self._reset_font_action.setShortcut(QtGui.QKeySequence("Ctrl+0"))
+
     def _build_menus(self) -> None:
         file_menu = self.menuBar().addMenu("&File")
         file_menu.addAction(self._new_action)
@@ -110,6 +120,10 @@ class TextEditor(QtWidgets.QMainWindow):
 
         view_menu = self.menuBar().addMenu("&View")
         view_menu.addAction(self._word_wrap_action)
+        view_menu.addSeparator()
+        view_menu.addAction(self._zoom_in_action)
+        view_menu.addAction(self._zoom_out_action)
+        view_menu.addAction(self._reset_font_action)
 
     def _build_toolbar(self) -> None:
         toolbar = self.addToolBar("Main")
@@ -137,6 +151,9 @@ class TextEditor(QtWidgets.QMainWindow):
         self._select_all_action.triggered.connect(self._editor.selectAll)
 
         self._word_wrap_action.toggled.connect(self._set_word_wrap)
+        self._zoom_in_action.triggered.connect(self._zoom_in)
+        self._zoom_out_action.triggered.connect(self._zoom_out)
+        self._reset_font_action.triggered.connect(self._reset_font_size)
 
         self._editor.document().modificationChanged.connect(self._update_title)
         self._editor.document().modificationChanged.connect(self._save_action.setEnabled)
@@ -151,6 +168,28 @@ class TextEditor(QtWidgets.QMainWindow):
             self._editor.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.WidgetWidth)
         else:
             self._editor.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
+
+    def _apply_editor_font(self) -> None:
+        self._editor.setFont(self._editor_font)
+        metrics = QtGui.QFontMetrics(self._editor_font)
+        self._editor.setTabStopDistance(metrics.horizontalAdvance(" ") * 4)
+
+    def _set_font_point_size(self, size: int) -> None:
+        size = max(self._font_size_min, min(self._font_size_max, size))
+        if self._editor_font.pointSize() == size:
+            return
+        self._editor_font.setPointSize(size)
+        self._apply_editor_font()
+
+    def _zoom_in(self) -> None:
+        self._set_font_point_size(self._editor_font.pointSize() + 1)
+
+    def _zoom_out(self) -> None:
+        self._set_font_point_size(self._editor_font.pointSize() - 1)
+
+    def _reset_font_size(self) -> None:
+        default = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont)
+        self._set_font_point_size(default.pointSize())
 
     def _update_title(self) -> None:
         name = self._path.name if self._path else "Untitled"
