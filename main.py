@@ -16,8 +16,10 @@ class TextEditor(QtWidgets.QMainWindow):
         self._editor_font = QtGui.QFontDatabase.systemFont(
             QtGui.QFontDatabase.FixedFont
         )
-        self._font_size_min = 12
+        self._font_size_default = 18
+        self._font_size_min = self._font_size_default
         self._font_size_max = 120
+        self._editor_font.setPointSize(self._font_size_default)
         self._apply_editor_font()
         self.setCentralWidget(self._editor)
 
@@ -188,8 +190,7 @@ class TextEditor(QtWidgets.QMainWindow):
         self._set_font_point_size(self._editor_font.pointSize() - 1)
 
     def _reset_font_size(self) -> None:
-        default = QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont)
-        self._set_font_point_size(default.pointSize())
+        self._set_font_point_size(self._font_size_default)
 
     def _update_title(self) -> None:
         name = self._path.name if self._path else "Untitled"
