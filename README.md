@@ -1,4 +1,4 @@
-# Waynotes
+# Wayedits
 
 Simple plain-text editor built with Python and PySide6 (Qt 6).
 
@@ -21,5 +21,7 @@ uv run python main.py path/to/file.txt
 
 ```bash
 uv sync --dev
-uv run pyinstaller --clean --noconfirm waynotes.spec
+uv run pyinstaller --clean --noconfirm wayedits.spec
 ```
+
+The binary is written to `dist/wayedits`.

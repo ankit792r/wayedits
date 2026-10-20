@@ -1,4 +1,4 @@
-# PyInstaller spec: single-file GUI binary (uv run pyinstaller --clean waynotes.spec)
+# PyInstaller spec: single-file GUI binary (uv run pyinstaller --clean wayedits.spec)
 
 from pathlib import Path
 
@@ -64,7 +64,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name="waynotes",
+    name="wayedits",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

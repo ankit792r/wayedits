@@ -195,7 +195,7 @@ class TextEditor(QtWidgets.QMainWindow):
     def _update_title(self) -> None:
         name = self._path.name if self._path else "Untitled"
         modified = " •" if self._editor.document().isModified() else ""
-        self.setWindowTitle(f"{name}{modified} — Waynotes")
+        self.setWindowTitle(f"{name}{modified} — Wayedits")
         if self._path is not None:
             self._path_label.setText(str(self._path.resolve()))
         else:
@@ -233,7 +233,7 @@ class TextEditor(QtWidgets.QMainWindow):
         except OSError as exc:
             QtWidgets.QMessageBox.warning(
                 self,
-                "Waynotes",
+                "Wayedits",
                 f"Could not open file:\n{path}\n\n{exc}",
             )
             return False
@@ -262,7 +262,7 @@ class TextEditor(QtWidgets.QMainWindow):
         except OSError as exc:
             QtWidgets.QMessageBox.warning(
                 self,
-                "Waynotes",
+                "Wayedits",
                 f"Could not save file:\n{path}\n\n{exc}",
             )
             return False
@@ -279,7 +279,7 @@ class TextEditor(QtWidgets.QMainWindow):
         name = self._path.name if self._path else "Untitled"
         answer = QtWidgets.QMessageBox.question(
             self,
-            "Waynotes",
+            "Wayedits",
             f"Save changes to “{name}” before closing?",
             QtWidgets.QMessageBox.StandardButton.Save
             | QtWidgets.QMessageBox.StandardButton.Discard
@@ -300,8 +300,8 @@ class TextEditor(QtWidgets.QMainWindow):
 
 def main() -> None:
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName("Waynotes")
-    app.setOrganizationName("Waynotes")
+    app.setApplicationName("Wayedits")
+    app.setOrganizationName("Wayedits")
 
     initial: Path | None = None
     if len(sys.argv) > 1:
